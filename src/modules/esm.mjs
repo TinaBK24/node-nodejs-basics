@@ -7,6 +7,8 @@ import { createServer as createServerHttp } from 'http';
 /* require('./files/c'); */
 import './files/c.cjs';
 
+import fs from 'fs';
+
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
@@ -16,10 +18,14 @@ let unknownObject;
 
 if (random > 0.5) {
     /* unknownObject = require('./files/a.json'); */
-    unknownObject = await import('./files/a.json', { assert: { type: 'json' } }).then(module => module.default);
+    const filePath = new URL('./files/a.json', import.meta.url);
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    unknownObject = JSON.parse(fileContent);
 } else {
     // unknownObject = require('./files/b.json');
-    unknownObject = await import('./files/b.json', { assert: { type: 'json' } }).then(module => module.default);
+    const filePath = new URL('./files/b.json', import.meta.url);
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    unknownObject = JSON.parse(fileContent);
 }
 
 console.log(`Release ${release()}`);
